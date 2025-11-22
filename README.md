@@ -27,15 +27,18 @@ I got tired of complex frameworks with thousands of files. ZEngine is simple - y
 
 ## Installation
 
+Create a new project:
+
 ```bash
-composer require spexdw/z-engine
+composer create-project spexdw/z-engine my-project
+cd my-project
 ```
 
-Or clone it:
+Or clone it directly:
 
 ```bash
-git clone https://github.com/spexdw/z-engine.git
-cd z-engine
+git clone https://github.com/spexdw/z-engine.git my-project
+cd my-project
 composer install
 ```
 
