@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+
+    name: PHP ${{ matrix.php }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: mbstring, pdo, openssl
+
+    - name: Install dependencies
+      run: composer install --no-interaction --prefer-dist
+
+    - name: Check syntax
+      run: find core app public -name "*.php" -exec php -l {} \;
+
+    - name: Run PHPStan
+      run: composer analyse
+      continue-on-error: true
