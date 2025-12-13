@@ -1,8 +1,25 @@
-RewriteEngine On
+ErrorDocument 403 /error-handler.php?code=403
+ErrorDocument 404 /error-handler.php?code=404
+ErrorDocument 500 /error-handler.php?code=500
 
-RewriteCond %{HTTP:Authorization} .
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+<IfModule mod_rewrite.c>
+    Options -Indexes
+    RewriteEngine On
 
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [L]
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    RewriteRule ^(core|app|storage|config|database|backups|vendor|bootstrap|cron|tasks)(/.*)?$ - [F,L]
+
+    RewriteRule ^(cron\.php)$ - [F,L]
+
+    RewriteCond %{REQUEST_URI} \.(env|git|sql|md|lock|json|xml|ini|log|zip|htaccess)$ [NC]
+    RewriteRule .* - [F,L]
+
+    RewriteRule ^error-handler\.php$ - [L]
+
+    RewriteCond %{REQUEST_URI} !^/index\.php$ [NC]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>

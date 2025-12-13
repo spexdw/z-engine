@@ -3,36 +3,14 @@
 if (!function_exists('env')) {
     function env(string $key, mixed $default = null): mixed
     {
-        static $loaded = false;
+        static $config = null;
 
-        if (!$loaded) {
-            $envFile = dirname(__DIR__) . '/.env';
-            if (file_exists($envFile)) {
-                $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                foreach ($lines as $line) {
-                    if (strpos(trim($line), '#') === 0) {
-                        continue;
-                    }
-                    [$name, $value] = explode('=', $line, 2);
-                    $value = trim($value);
-
-                    if ($value === 'true' || $value === '(true)') {
-                        $value = true;
-                    } elseif ($value === 'false' || $value === '(false)') {
-                        $value = false;
-                    } elseif ($value === 'null' || $value === '(null)') {
-                        $value = null;
-                    } elseif ($value === 'empty' || $value === '(empty)') {
-                        $value = '';
-                    }
-
-                    $_ENV[trim($name)] = $value;
-                }
-            }
-            $loaded = true;
+        if ($config === null) {
+            $envFile = dirname(__DIR__) . '/config/env.php';
+            $config = file_exists($envFile) ? require $envFile : [];
         }
 
-        return $_ENV[$key] ?? $default;
+        return $config[$key] ?? $default;
     }
 }
 
@@ -194,5 +172,12 @@ if (!function_exists('hash')) {
     function hash_service(): \ZEngine\Core\Services\HashService
     {
         return app('hash');
+    }
+}
+
+if (!function_exists('mail')) {
+    function mail(): \ZEngine\Core\Services\MailService
+    {
+        return app('mail');
     }
 }

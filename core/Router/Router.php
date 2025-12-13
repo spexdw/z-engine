@@ -12,6 +12,7 @@ class Router
     private array $routes = [];
     private array $middleware = [];
     private Container $container;
+    private array $currentMiddleware = [];
 
     public function __construct(Container $container)
     {
@@ -55,7 +56,8 @@ class Router
 
     private function addRoute(string $method, string $uri, Closure|array|string $action): Route
     {
-        $route = new Route($method, $uri, $action);
+        $fullUri = $this->currentPrefix . $uri;
+        $route = new Route($method, $fullUri, $action);
         $this->routes[$method][] = $route;
         return $route;
     }
@@ -66,21 +68,33 @@ class Router
         $middleware = $attributes['middleware'] ?? [];
 
         $previousPrefix = $this->getCurrentPrefix();
-        $this->setPrefix($prefix);
+        $previousMiddleware = $this->currentMiddleware ?? [];
+
+        $this->setPrefix($previousPrefix . $prefix);
+        $this->currentMiddleware = array_merge($previousMiddleware, (array) $middleware);
+
+        $beforeCounts = [];
+        foreach ($this->routes as $method => $routes) {
+            $beforeCounts[$method] = count($routes);
+        }
 
         $callback($this);
 
-        $this->setPrefix($previousPrefix);
-
-        if (!empty($middleware)) {
-            foreach ($this->getLastGroupRoutes() as $route) {
-                $route->middleware($middleware);
+        foreach ($this->routes as $method => $routes) {
+            $startIndex = $beforeCounts[$method] ?? 0;
+            for ($i = $startIndex; $i < count($routes); $i++) {
+                if (!empty($this->currentMiddleware)) {
+                    $this->routes[$method][$i]->middleware($this->currentMiddleware);
+                }
             }
         }
+
+        $this->setPrefix($previousPrefix);
+        $this->currentMiddleware = $previousMiddleware;
     }
 
     private string $currentPrefix = '';
-    private int $lastRouteCount = 0;
+    private array $lastRouteCounts = [];
 
     private function getCurrentPrefix(): string
     {
@@ -89,7 +103,10 @@ class Router
 
     private function setPrefix(string $prefix): void
     {
-        $this->lastRouteCount = count($this->routes);
+        $this->lastRouteCounts = [];
+        foreach ($this->routes as $method => $methodRoutes) {
+            $this->lastRouteCounts[$method] = count($methodRoutes);
+        }
         $this->currentPrefix = $prefix;
     }
 
@@ -97,7 +114,9 @@ class Router
     {
         $routes = [];
         foreach ($this->routes as $method => $methodRoutes) {
-            $routes = array_merge($routes, array_slice($methodRoutes, $this->lastRouteCount));
+            $startIndex = $this->lastRouteCounts[$method] ?? 0;
+            $newRoutes = array_slice($methodRoutes, $startIndex);
+            $routes = array_merge($routes, $newRoutes);
         }
         return $routes;
     }
@@ -123,6 +142,8 @@ class Router
 
     private function runRoute(Route $route, array $params, Request $request): Response
     {
+        $request->setParams($params);
+
         $middlewares = $route->getMiddleware();
 
         $pipeline = array_reduce(

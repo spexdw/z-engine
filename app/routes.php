@@ -2,14 +2,31 @@
 
 use ZEngine\Core\Http\Request;
 use ZEngine\Core\Http\Response;
+use ZEngine\App\Controllers\WelcomeController;
+use ZEngine\App\Middleware\GuestMiddleware;
 
 $router = router();
 
-$router->get('/', function (Request $request) {
-    $version = app()->version();
-    return view('welcome', [
-        'version' => $version,
-        'services_count' => app()->getContainer()->count()
+if (env('MAINTENANCE_MODE', 0)) {
+    $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    $whitelistedIps = env('WHITELISTED_IPS', []);
+
+    if (!in_array($clientIp, $whitelistedIps)) {
+        http_response_code(503);
+        include __DIR__ . '/Views/errors/maintenance.php';
+        exit;
+    }
+}
+
+$router->group(['middleware' => [GuestMiddleware::class]], function ($router) {
+    $router->get('/', [WelcomeController::class, 'showWelcome']);
+    $router->get('/welcome', [WelcomeController::class, 'showWelcome']);
+});
+
+$router->get('/say/{msg}', function ($msg) {
+    return json([
+        'success' => true,
+        'message' => $msg
     ]);
 });
 

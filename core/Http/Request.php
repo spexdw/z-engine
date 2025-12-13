@@ -10,6 +10,7 @@ class Request
     private array $files;
     private array $cookies;
     private array $headers;
+    private array $params = [];
     private ?string $content = null;
 
     public function __construct(
@@ -35,14 +36,25 @@ class Request
     private function extractHeaders(): array
     {
         $headers = [];
+
         foreach ($this->server as $key => $value) {
             if (str_starts_with($key, 'HTTP_')) {
                 $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
                 $headers[$headerName] = $value;
             }
         }
+
+        if (isset($this->server['CONTENT_TYPE'])) {
+            $headers['Content-Type'] = $this->server['CONTENT_TYPE'];
+        }
+
+        if (isset($this->server['CONTENT_LENGTH'])) {
+            $headers['Content-Length'] = $this->server['CONTENT_LENGTH'];
+        }
+
         return $headers;
     }
+
 
     public function method(): string
     {
@@ -71,16 +83,26 @@ class Request
 
     public function input(string $key, mixed $default = null): mixed
     {
+        if ($this->isJson()) {
+            return $this->json($key, $default);
+        }
         return $this->request[$key] ?? $this->query[$key] ?? $default;
     }
 
     public function all(): array
     {
+        if ($this->isJson()) {
+            return $this->json() ?? [];
+        }
         return array_merge($this->query, $this->request);
     }
 
     public function has(string $key): bool
     {
+        if ($this->isJson()) {
+            $data = $this->json();
+            return isset($data[$key]);
+        }
         return isset($this->request[$key]) || isset($this->query[$key]);
     }
 
@@ -151,5 +173,27 @@ class Request
     public function isAjax(): bool
     {
         return $this->header('X-Requested-With') === 'XMLHttpRequest';
+    }
+
+    public function setParams(array $params): void
+    {
+        $this->params = $params;
+    }
+
+    public function param(string $key, mixed $default = null): mixed
+    {
+        return $this->params[$key] ?? $default;
+    }
+
+    private array $apiData = [];
+
+    public function setApiKey(array $key): void
+    {
+        $this->apiData['key'] = $key;
+    }
+
+    public function getApiKey(): ?array
+    {
+        return $this->apiData['key'] ?? null;
     }
 }

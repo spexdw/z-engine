@@ -10,6 +10,7 @@ use ZEngine\Core\Services\CacheService;
 use ZEngine\Core\Services\ValidationService;
 use ZEngine\Core\Services\LoggerService;
 use ZEngine\Core\Services\HashService;
+use ZEngine\Core\Services\MailService;
 
 class Providers
 {
@@ -23,6 +24,7 @@ class Providers
         self::registerValidation($container);
         self::registerLogger($container);
         self::registerHash($container);
+        self::registerMail($container);
     }
 
     private static function registerDatabase(Container $container): void
@@ -37,7 +39,7 @@ class Providers
     private static function registerSession(Container $container): void
     {
         $container->singleton('session', function () {
-            return new SessionService();
+            return SessionService::getInstance();
         });
         $container->alias('session', SessionService::class);
     }
@@ -90,4 +92,13 @@ class Providers
         });
         $container->alias('hash', HashService::class);
     }
+
+    private static function registerMail(Container $container): void
+    {
+        $container->singleton('mail', function () {
+            return new MailService(config('mail'));
+        });
+        $container->alias('mail', MailService::class);
+    }
+
 }
