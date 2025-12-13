@@ -44,8 +44,9 @@ composer install
 
 ## Quick Start
 
-1. Copy `.env.example` to `.env` and set your config
-2. Edit `app/routes.php` to add your routes
+1. Edit `config/env.php` and set your config
+2. 
+3. Edit `app/routes.php` to add your routes
 
 ```php
 $router->get('/hello/{name}', function ($name) {
