@@ -19,6 +19,8 @@ class CacheService
 
     public function get(string $key, mixed $default = null): mixed
     {
+        $this->autoCleanup();
+
         $file = $this->getFilePath($key);
 
         if (!file_exists($file)) {
@@ -113,5 +115,48 @@ class CacheService
     private function getFilePath(string $key): string
     {
         return $this->cacheDir . '/' . md5($key) . '.cache';
+    }
+
+    public function cleanup(): int
+    {
+        $maxAge = 3 * 3600; // 3 hours
+        $cutoffTime = time() - $maxAge;
+        $deleted = 0;
+
+        $files = glob($this->cacheDir . '/*.cache');
+
+        foreach ($files as $file) {
+            if (!is_file($file)) {
+                continue;
+            }
+
+            if (filemtime($file) < $cutoffTime) {
+                if (unlink($file)) {
+                    $deleted++;
+                }
+                continue;
+            }
+
+            try {
+                $data = @unserialize(file_get_contents($file));
+                if ($data && isset($data['expires_at']) && $data['expires_at'] < time()) {
+                    if (unlink($file)) {
+                        $deleted++;
+                    }
+                }
+            } catch (\Exception $e) {
+                @unlink($file);
+                $deleted++;
+            }
+        }
+
+        return $deleted;
+    }
+
+    private function autoCleanup(): void
+    {
+        if (rand(1, 100) <= 2) {
+            $this->cleanup();
+        }
     }
 }

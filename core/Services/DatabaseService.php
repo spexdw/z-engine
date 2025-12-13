@@ -236,4 +236,43 @@ class QueryBuilder
         $result = $this->db->query($sql, $this->bindings);
         return (int) ($result[0]['count'] ?? 0);
     }
+
+    public function update(array $data): int
+    {
+        $set = implode(', ', array_map(fn($key) => "{$key} = ?", array_keys($data)));
+
+        $sql = "UPDATE {$this->table} SET {$set}";
+
+        $bindings = array_values($data);
+
+        if (!empty($this->wheres)) {
+            $sql .= " WHERE " . implode(' AND ', $this->wheres);
+            $bindings = array_merge($bindings, $this->bindings);
+        }
+
+        return $this->db->execute($sql, $bindings);
+    }
+
+    public function delete(): int
+    {
+        $sql = "DELETE FROM {$this->table}";
+
+        if (!empty($this->wheres)) {
+            $sql .= " WHERE " . implode(' AND ', $this->wheres);
+        }
+
+        return $this->db->execute($sql, $this->bindings);
+    }
+
+    public function insert(array $data): int
+    {
+        $columns = implode(', ', array_keys($data));
+        $placeholders = implode(', ', array_fill(0, count($data), '?'));
+        $sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders})";
+
+        $this->db->execute($sql, array_values($data));
+
+        return (int) $this->db->connect()->lastInsertId();
+    }
+
 }

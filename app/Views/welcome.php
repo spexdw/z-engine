@@ -203,6 +203,8 @@
                 <p class="version">Version <?= $version ?? '1.0.0' ?> <span class="cursor">▮</span></p>
             </div>
 
+            <p style="text-align: center;">you can say message here <a href="say/secret_message" style="text-blink: initial;">/say/msg</a></p> <br/>
+
             <div class="info-grid">
                 <div class="info-card">
                     <div class="info-card-title">► Services Loaded</div>

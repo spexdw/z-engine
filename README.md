@@ -181,11 +181,27 @@ Use it anywhere:
 $result = app('myservice')->doSomething();
 ```
 
+## Cron-Jobs (Tasks)
+Add your cron to `App\Tasks\MyCron` then add your task to `/cron.php`
+```php
+try {
+    $doSomething = new DoSomething();
+    $doSomething->handle();
+
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+}
+```
+Note : cron.php only accessible on cli with CRON_KEY
+
+
 ## Error Handling
 
 Set `APP_DEBUG=true` in `.env` for detailed error pages with code snippets.
 
 Set `APP_DEBUG=false` for production to show clean error pages.
+
+Set `MAINTENANCE_MODE=1` for Maintenance mode (ip whitelist & maintenance msg included)
 
 All errors are logged to `storage/logs/error.log`.
 
