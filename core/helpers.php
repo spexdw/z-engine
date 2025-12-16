@@ -181,3 +181,10 @@ if (!function_exists('mail')) {
         return app('mail');
     }
 }
+
+if (!function_exists('event')) {
+    function event(): \ZEngine\Core\Services\EventService
+    {
+        return app('event');
+    }
+}

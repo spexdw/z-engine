@@ -19,10 +19,21 @@ class WelcomeController
     {
         $something = $this->welcomeModel->getSomething();
 
+        // create event
+        event()->listen('something_dat');
+
+        // event function
+        event()->listen('something_dat', function ($smthng) {
+            logger()->info("Something data: $smthng");
+        });
+
+        // event dispatch
+        event()->dispatch('something_dat','SOME_EVENT_DATA');
+
         return view('welcome', [
             'something' => $something,
-            'version' => '1.0.2',
-            'services_count' => '9'
+            'version' => '1.0.3',
+            'services_count' => '10'
         ]);
     }
 

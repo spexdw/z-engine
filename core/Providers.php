@@ -11,6 +11,7 @@ use ZEngine\Core\Services\ValidationService;
 use ZEngine\Core\Services\LoggerService;
 use ZEngine\Core\Services\HashService;
 use ZEngine\Core\Services\MailService;
+use ZEngine\Core\Services\EventService;
 
 class Providers
 {
@@ -25,6 +26,7 @@ class Providers
         self::registerLogger($container);
         self::registerHash($container);
         self::registerMail($container);
+        self::registerEvent($container);
     }
 
     private static function registerDatabase(Container $container): void
@@ -99,6 +101,14 @@ class Providers
             return new MailService(config('mail'));
         });
         $container->alias('mail', MailService::class);
+    }
+
+    private static function registerEvent(Container $container): void
+    {
+        $container->singleton('event', function () {
+            return new EventService();
+        });
+        $container->alias('event', EventService::class);
     }
 
 }

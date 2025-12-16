@@ -45,8 +45,7 @@ composer install
 ## Quick Start
 
 1. Edit `config/env.php` and set your config
-2. 
-3. Edit `app/routes.php` to add your routes
+2. Edit `app/routes.php` to add your routes
 
 ```php
 $router->get('/hello/{name}', function ($name) {
@@ -134,6 +133,15 @@ $isValid = validator()->validate($data, $rules);
 
 // Logging
 logger()->error('Something broke', ['context' => 'details']);
+
+// Events
+event()->listen('user.registered');
+
+event()->listen('user.registered', function ($userId) {
+    logger()->info('User registered with ID: ' . $userId);
+});
+
+event()->dispatch('user.registered', 123);
 ```
 
 ## Middleware
