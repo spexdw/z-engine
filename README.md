@@ -142,6 +142,16 @@ event()->listen('user.registered', function ($userId) {
 });
 
 event()->dispatch('user.registered', 123);
+
+// Rate Limiting
+$rateLimit = ratelimit()->check('api.endpoint', [
+    '1minute' => 10,   
+    '1hour' => 100   
+]); // you can give a identifier if u want
+
+if ($rateLimit) {
+    return Response::json(['error' => $rateLimit], 429);
+}
 ```
 
 ## Middleware

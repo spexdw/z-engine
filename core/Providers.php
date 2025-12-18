@@ -12,6 +12,7 @@ use ZEngine\Core\Services\LoggerService;
 use ZEngine\Core\Services\HashService;
 use ZEngine\Core\Services\MailService;
 use ZEngine\Core\Services\EventService;
+use ZEngine\Core\Services\RateLimitService;
 
 class Providers
 {
@@ -27,6 +28,7 @@ class Providers
         self::registerHash($container);
         self::registerMail($container);
         self::registerEvent($container);
+        self::registerRateLimit($container);
     }
 
     private static function registerDatabase(Container $container): void
@@ -40,7 +42,7 @@ class Providers
 
     private static function registerSession(Container $container): void
     {
-        $container->singleton('session', function () {
+        $container->bind('session', function () {
             return SessionService::getInstance();
         });
         $container->alias('session', SessionService::class);
@@ -109,6 +111,14 @@ class Providers
             return new EventService();
         });
         $container->alias('event', EventService::class);
+    }
+
+    private static function registerRateLimit(Container $container): void
+    {
+        $container->bind('ratelimit', function () {
+            return RateLimitService::getInstance();
+        });
+        $container->alias('ratelimit', RateLimitService::class);
     }
 
 }

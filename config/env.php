@@ -24,6 +24,7 @@ return [
     'SESSION_SECURE' => true,
     'SESSION_HTTPONLY' => true,
     'SESSION_SAMESITE' => 'Lax',
+    'SESSION_STORAGE_PATH' => __DIR__ . '/../storage/sessions',
 
     'COOKIE_EXPIRE' => 3600,
     'COOKIE_PATH' => '/',

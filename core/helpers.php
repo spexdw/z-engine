@@ -168,7 +168,7 @@ if (!function_exists('logger')) {
     }
 }
 
-if (!function_exists('hash')) {
+if (!function_exists('hash_service')) {
     function hash_service(): \ZEngine\Core\Services\HashService
     {
         return app('hash');
@@ -186,5 +186,12 @@ if (!function_exists('event')) {
     function event(): \ZEngine\Core\Services\EventService
     {
         return app('event');
+    }
+}
+
+if (!function_exists('ratelimit')) {
+    function ratelimit(): \ZEngine\Core\Services\RateLimitService
+    {
+        return app('ratelimit');
     }
 }

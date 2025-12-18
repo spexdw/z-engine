@@ -31,9 +31,15 @@ class EventService
         foreach ($this->getListenersForEvent($event) as $item) {
             $listener = $item['listener'];
 
-            $result = is_string($listener)
-                ? app($listener)->handle($payload)
-                : $listener($payload);
+            if (is_string($listener)) {
+                $instance = app($listener);
+                if (!method_exists($instance, 'handle')) {
+                    throw new \BadMethodCallException("Listener class {$listener} must have a handle() method");
+                }
+                $result = $instance->handle($payload);
+            } else {
+                $result = $listener($payload);
+            }
 
             if ($result === false) {
                 break;
