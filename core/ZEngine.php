@@ -109,16 +109,6 @@ class ZEngine
         return $value;
     }
 
-    public function version(): string
-    {
-        $composerFile = dirname(__DIR__) . '/composer.json';
-        if (file_exists($composerFile)) {
-            $composer = json_decode(file_get_contents($composerFile), true);
-            return $composer['version'] ?? '1.0.0';
-        }
-        return '1.0.0';
-    }
-
     public function run(): void
     {
         $request = $this->get('request');

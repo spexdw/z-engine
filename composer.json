@@ -1,6 +1,5 @@
 {
     "name": "spexdw/z-engine",
-    "version": "1.0.3",
     "description": "ZEngine - A modern, lightweight PHP framework with powerful service architecture",
     "type": "project",
     "keywords": ["framework", "php", "zengine", "service-oriented", "routing"],
