@@ -44,8 +44,6 @@ async function handleAjaxSubmit(e) {
 }
 
 window.ZEngine = {
-    version: '1.0.2',
-
     async fetch(url, options = {}) {
         const defaults = {
             headers: {

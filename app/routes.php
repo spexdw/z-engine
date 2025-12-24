@@ -23,9 +23,9 @@ $router->group(['middleware' => [GuestMiddleware::class]], function ($router) {
     $router->get('/welcome', [WelcomeController::class, 'showWelcome']);
 });
 
-$router->get('/say/{msg}', function ($msg) {
+$router->get('/hi/{name}', function ($name) {
     return json([
         'success' => true,
-        'message' => $msg
+        'message' => "Hello, $name!"
     ]);
 });

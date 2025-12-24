@@ -32,8 +32,6 @@ class WelcomeController
 
         return view('welcome', [
             'something' => $something,
-            'version' => '1.0.3',
-            'services_count' => '10'
         ]);
     }
 

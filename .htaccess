@@ -1,6 +1,6 @@
-ErrorDocument 403 /error-handler.php?code=403
-ErrorDocument 404 /error-handler.php?code=404
-ErrorDocument 500 /error-handler.php?code=500
+ErrorDocument 403 /app/Views/errors/403.php
+ErrorDocument 404 /app/Views/errors/404.php
+ErrorDocument 500 /app/Views/errors/500.php
 
 <IfModule mod_rewrite.c>
     Options -Indexes
@@ -9,14 +9,13 @@ ErrorDocument 500 /error-handler.php?code=500
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+    RewriteCond %{REQUEST_URI} !^/app/Views/errors/
     RewriteRule ^(core|app|storage|config|database|backups|vendor|bootstrap|cron|tasks)(/.*)?$ - [F,L]
 
     RewriteRule ^(cron\.php)$ - [F,L]
 
     RewriteCond %{REQUEST_URI} \.(env|git|sql|md|lock|json|xml|ini|log|zip|htaccess)$ [NC]
     RewriteRule .* - [F,L]
-
-    RewriteRule ^error-handler\.php$ - [L]
 
     RewriteCond %{REQUEST_URI} !^/index\.php$ [NC]
     RewriteCond %{REQUEST_FILENAME} !-d

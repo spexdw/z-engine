@@ -24,7 +24,7 @@
             "ZEngine\\App\\": "app/"
         },
         "files": [
-            "core/helpers.php"
+            "core/Helpers.php"
         ]
     },
     "autoload-dev": {

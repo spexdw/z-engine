@@ -30,10 +30,10 @@ class MailService
         $this->mailer->SMTPDebug = $this->config['SMTP_DEBUG'] ?? 0;
         $this->mailer->CharSet = 'UTF-8';
 
-        $this->mailer->setFrom(
-            $this->config['SMTP_FROM_ADDRESS'] ?? 'noreply@zengine.app',
-            $this->config['SMTP_FROM_NAME'] ?? 'ZEngine'
-        );
+        $fromAddress = !empty($this->config['SMTP_FROM_ADDRESS']) ? $this->config['SMTP_FROM_ADDRESS'] : 'noreply@zengine.app';
+        $fromName = !empty($this->config['SMTP_FROM_NAME']) ? $this->config['SMTP_FROM_NAME'] : 'ZEngine';
+
+        $this->mailer->setFrom($fromAddress, $fromName);
     }
 
     public function send(string $to, string $subject, string $body, array $data = []): bool

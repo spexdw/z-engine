@@ -168,8 +168,8 @@ if (!function_exists('logger')) {
     }
 }
 
-if (!function_exists('hash_service')) {
-    function hash_service(): \ZEngine\Core\Services\HashService
+if (!function_exists('hasher')) {
+    function hasher(): \ZEngine\Core\Services\HashService
     {
         return app('hash');
     }

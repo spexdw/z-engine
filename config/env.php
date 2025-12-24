@@ -9,6 +9,9 @@ return [
     'APP_TIMEZONE' => 'UTC',
     'APP_LOCALE' => 'en',
     'CRON_KEY' => 'zengine_cron_key',
+    'LOGGER_PATH' => __DIR__ . '/../storage/logs',
+    'CACHE_PATH' => __DIR__ . '/../storage/cache',
+    'CACHE_TTL' => 3600,
 
     'DB_CONNECTION' => 'mysql',
     'DB_HOST' => 'localhost',
@@ -44,6 +47,12 @@ return [
     'SMTP_AUTH' => true,
     'SMTP_DEBUG' => 0,
 
+    'HASH_ALGO' => 'bcrypt',
+    'HASH_OPTIONS' => [
+        'cost' => 12,
+    ],
+
+    'RATELIMIT_STORAGE_PATH' => __DIR__ . '/../storage/ratelimit',
 
     'MAINTENANCE_MODE' => 0,
     'MAINTENANCE_MESSAGE' => 'We are currently performing maintenance. Please check back soon.',

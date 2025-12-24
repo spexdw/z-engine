@@ -34,7 +34,15 @@ class Providers
     private static function registerDatabase(Container $container): void
     {
         $container->singleton('db', function () {
-            $config = config('database.connections.' . config('database.default'));
+            $config = [
+                'driver' => env('DB_CONNECTION', 'mysql'),
+                'host' => env('DB_HOST', 'localhost'),
+                'port' => env('DB_PORT', 3306),
+                'database' => env('DB_DATABASE', ''),
+                'username' => env('DB_USERNAME', 'root'),
+                'password' => env('DB_PASSWORD', ''),
+                'charset' => 'utf8mb4'
+            ];
             return new DatabaseService($config);
         });
         $container->alias('db', DatabaseService::class);
@@ -51,7 +59,15 @@ class Providers
     private static function registerCookie(Container $container): void
     {
         $container->singleton('cookie', function () {
-            return new CookieService();
+            $config = [
+                'expire' => env('COOKIE_EXPIRE', 3600),
+                'path' => env('COOKIE_PATH', '/'),
+                'domain' => env('COOKIE_DOMAIN', ''),
+                'secure' => env('COOKIE_SECURE', false),
+                'httponly' => env('COOKIE_HTTPONLY', true),
+                'samesite' => env('COOKIE_SAMESITE', 'Lax')
+            ];
+            return new CookieService($config);
         });
         $container->alias('cookie', CookieService::class);
     }
@@ -67,7 +83,10 @@ class Providers
     private static function registerCache(Container $container): void
     {
         $container->singleton('cache', function () {
-            $config = config('cache', []);
+            $config = [
+                'path' => env('CACHE_PATH'),
+                'ttl' => env('CACHE_TTL', 3600)
+            ];
             return new CacheService($config);
         });
         $container->alias('cache', CacheService::class);
@@ -84,7 +103,10 @@ class Providers
     private static function registerLogger(Container $container): void
     {
         $container->singleton('logger', function () {
-            return new LoggerService();
+            $config = [
+                'path' => env('LOGGER_PATH')
+            ];
+            return new LoggerService($config);
         });
         $container->alias('logger', LoggerService::class);
     }
@@ -92,7 +114,21 @@ class Providers
     private static function registerHash(Container $container): void
     {
         $container->singleton('hash', function () {
-            return new HashService();
+            $algoMap = [
+                'bcrypt' => PASSWORD_BCRYPT,
+                'argon2i' => PASSWORD_ARGON2I,
+                'argon2id' => PASSWORD_ARGON2ID,
+                'default' => PASSWORD_DEFAULT
+            ];
+
+            $algoName = strtolower(env('HASH_ALGO', 'bcrypt'));
+            $algo = $algoMap[$algoName] ?? PASSWORD_BCRYPT;
+
+            $config = [
+                'algo' => $algo,
+                'options' => env('HASH_OPTIONS', ['cost' => 12])
+            ];
+            return new HashService($config);
         });
         $container->alias('hash', HashService::class);
     }
@@ -100,7 +136,19 @@ class Providers
     private static function registerMail(Container $container): void
     {
         $container->singleton('mail', function () {
-            return new MailService(config('mail'));
+            $config = [
+                'SMTP_HOST' => env('SMTP_HOST'),
+                'SMTP_PORT' => env('SMTP_PORT', 587),
+                'SMTP_USERNAME' => env('SMTP_USERNAME'),
+                'SMTP_PASSWORD' => env('SMTP_PASSWORD'),
+                'SMTP_ENCRYPTION' => env('SMTP_ENCRYPTION', 'tls'),
+                'SMTP_FROM_ADDRESS' => env('SMTP_FROM_ADDRESS'),
+                'SMTP_FROM_NAME' => env('SMTP_FROM_NAME'),
+                'SMTP_TIMEOUT' => env('SMTP_TIMEOUT', 30),
+                'SMTP_AUTH' => env('SMTP_AUTH', true),
+                'SMTP_DEBUG' => env('SMTP_DEBUG', 0)
+            ];
+            return new MailService($config);
         });
         $container->alias('mail', MailService::class);
     }

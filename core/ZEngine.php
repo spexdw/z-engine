@@ -76,7 +76,23 @@ class ZEngine
         if ($this->booted) {
             return;
         }
+
+        $this->setTimezone();
+        $this->setLocale();
+
         $this->booted = true;
+    }
+
+    private function setTimezone(): void
+    {
+        $timezone = env('APP_TIMEZONE', 'UTC');
+        date_default_timezone_set($timezone);
+    }
+
+    private function setLocale(): void
+    {
+        $locale = env('APP_LOCALE', 'en');
+        setlocale(LC_ALL, $locale);
     }
 
     public function get(string $name): mixed

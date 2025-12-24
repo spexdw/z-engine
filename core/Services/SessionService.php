@@ -15,6 +15,8 @@ class SessionService
 
     private function __construct()
     {
+        $this->cookieName = env('SESSION_NAME', 'ZENGINE_SESSION');
+        $this->lifetime = env('SESSION_LIFETIME', 7200);
         $this->storagePath = rtrim(env('SESSION_STORAGE_PATH') ?? __DIR__ . '/../../storage/sessions', '/');
         if (!is_dir($this->storagePath)) {
             mkdir($this->storagePath, 0755, true);

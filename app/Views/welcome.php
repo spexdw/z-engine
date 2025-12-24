@@ -200,16 +200,11 @@
 
             <div class="welcome-text">
                 <h1>Welcome to ZEngine</h1>
-                <p class="version">Version <?= $version ?? '1.0.0' ?> <span class="cursor">▮</span></p>
             </div>
 
-            <p style="text-align: center;">you can say message here <a href="say/secret_message" style="text-blink: initial;">/say/msg</a></p> <br/>
+            <p style="text-align: center;">you can hi john here <a href="hi/john" style="text-blink: initial;">/hi/john</a></p> <br/>
 
             <div class="info-grid">
-                <div class="info-card">
-                    <div class="info-card-title">► Services Loaded</div>
-                    <div class="info-card-value"><?= $services_count ?? 12 ?> Services</div>
-                </div>
                 <div class="info-card">
                     <div class="info-card-title">► PHP Version</div>
                     <div class="info-card-value">PHP <?= PHP_VERSION ?></div>
@@ -222,7 +217,7 @@
         </div>
 
         <div class="footer">
-            ZEngine Framework v<?= $version ?? '1.0.0' ?> │
+            ZEngine Framework │
             Built with ❤️ by <a href="https://github.com/spexdw">spexdw</a> │
             Licensed under MIT
         </div>
@@ -230,8 +225,6 @@
 
     <script>
         console.log('%c⚡ ZEngine Framework', 'color: #4ade80; font-size: 20px; font-weight: bold;');
-        console.log('%cVersion: <?= $version ?? '1.0.0' ?>', 'color: #60a5fa; font-size: 14px;');
-        console.log('%cServices: <?= $services_count ?? 12 ?>', 'color: #fbbf24; font-size: 14px;');
         console.log('%cFramework initialized successfully!', 'color: #4ade80; font-size: 12px;');
     </script>
 </body>
