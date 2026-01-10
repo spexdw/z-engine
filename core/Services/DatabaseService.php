@@ -275,4 +275,44 @@ class QueryBuilder
         return (int) $this->db->connect()->lastInsertId();
     }
 
+    public function sum(string $column): string
+    {
+        $sql = "SELECT SUM({$column}) as total FROM {$this->table}";
+
+        if (!empty($this->wheres)) {
+            $sql .= " WHERE " . implode(' AND ', $this->wheres);
+        }
+
+        $result = $this->db->query($sql, $this->bindings);
+        return $result[0]['total'] ?? '0.00';
+    }
+
+    public function increment(string $column, string|int $amount = '1'): int
+    {
+        $sql = "UPDATE {$this->table} SET {$column} = {$column} + ?";
+
+        $bindings = [(string)$amount];
+
+        if (!empty($this->wheres)) {
+            $sql .= " WHERE " . implode(' AND ', $this->wheres);
+            $bindings = array_merge($bindings, $this->bindings);
+        }
+
+        return $this->db->execute($sql, $bindings);
+    }
+
+    public function decrement(string $column, string|int $amount = '1'): int
+    {
+        $sql = "UPDATE {$this->table} SET {$column} = {$column} - ?";
+
+        $bindings = [(string)$amount];
+
+        if (!empty($this->wheres)) {
+            $sql .= " WHERE " . implode(' AND ', $this->wheres);
+            $bindings = array_merge($bindings, $this->bindings);
+        }
+
+        return $this->db->execute($sql, $bindings);
+    }
+
 }
